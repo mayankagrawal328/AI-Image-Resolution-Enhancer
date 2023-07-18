@@ -1,0 +1,158 @@
+<html>
+<head>
+
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+    integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+    crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+<title>
+  AI Image Resolution Enhancer
+</title>
+
+<style>
+  body {
+    background-image:url({{ url_for ('static', filename = 'pexels-fwstudio-164005.jpg') }});
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+  }
+
+
+  * {
+    box-sizing: border-box;
+  }
+  
+  .flex-container {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    height:90vh;
+
+  }
+  
+  .flex-item-left {
+    /*background-color: #f1f1f1;*/
+    padding: 10px;
+    flex: 50%;
+    
+
+    background: rgba( 255, 255, 255, 0.15 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 0px );
+    -webkit-backdrop-filter: blur( 0px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+  
+  .flex-item-right {
+    /*background-color: dodgerblue;*/
+    padding: 10px;
+    flex: 50%;
+    position:relative;
+
+    background: rgba( 255, 255, 255, 0.15 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 0px );
+    -webkit-backdrop-filter: blur( 0px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+  }
+  
+  /* Responsive layout - makes a one column-layout instead of two-column layout */
+  @media (max-width: 800px) {
+    .flex-container {
+      height:90vh;
+      flex-direction: column;
+    }
+
+</style>
+</head>
+<body>
+
+
+  <h1>Max file size should be 1MB</h1>
+<input type="file" style=" float:left; padding-left:56px;"onchange="encodeImageFileAsURL(this)" />
+<br><br><br>
+
+  <div id="flex" style="display:none;"  class="flex-container">
+    <div class="flex-item-left">
+      <img style="border-radius: 10%; margin-top:auto; width:210px;" id="image" src="">
+
+    </div>
+    <div class="flex-item-right" >
+      <img style=" border-radius: 10%; width:210px; margin-top:auto; " id="image2" src="">
+      <p id="p" style="display:none;">Processing.....</p>
+      <a id ="xyz" style="display:none;" class="btn" download="MayankQRcode" href="data:image/png;base64,asdasd..."><button class="btn" style=" height:30px; border-radius:10px; background-color:skyblue; color:white;"> Download  <i class="fa fa-download"></i></button></a>
+    </div>
+  </div>
+
+  <br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+
+      <img style="border-radius: 10%; float:left;margin:40px; width:30vw;" id="imagex" src="{{url_for('static', filename='ex1.png')}}">
+
+      <img style=" border-radius: 10%; width:25vw; float:right; margin:40px; " id="imagex1" src="{{url_for('static', filename='ex2.jpg')}}">
+  
+
+
+        <script>
+          
+          
+
+          var format="";  
+          function encodeImageFileAsURL(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+              x = ((reader.result.length * (3/4)) - 1)*0.000001;
+              if(x > 1.1){
+                alert("Size is more then 1MB!!!");
+                return;
+              }
+              
+              document.getElementById("image").src=reader.result;
+              document.getElementById("flex").style="display:flex;";
+              document.getElementById("image2").src="{{url_for('static', filename='processing-animation.gif')}}";
+              document.getElementById("p").style="display:static;";
+              socket.send(reader.result.substring(reader.result.search(",")));
+            }
+            reader.readAsDataURL(file);
+          }
+
+
+
+
+
+
+
+
+
+            var socket = io.connect();
+            socket.on('connect', function(){
+              //socket.send('a');
+            })
+            socket.on('message', function(msg){
+              //console.log("Recive","data:image/png;base64,"+msg);
+              document.getElementById("image2").src="data:image/png;base64,"+msg;
+              document.getElementById("xyz").href="data:image/png;base64,"+msg;
+              document.getElementById("xyz").style="display:block;";
+              document.getElementById("p").style="display:none;";
+            })
+      
+      
+          </script>
+</body>
+</html>
+
+
+
+
